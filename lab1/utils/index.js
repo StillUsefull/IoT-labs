@@ -1,13 +1,9 @@
 const csvtojson = require('csvtojson/v2');
 const Ajv = require('ajv');
-exports.parse = async (accelerometerPath, gpsPath) => {
+exports.parse = async (csvPath) => {
     try {
-        const accelerometerJson = await csvtojson().fromFile(accelerometerPath);
-        const gpsJson = await csvtojson().fromFile(gpsPath);
-        return {
-            accelerometerJson,
-            gpsJson
-        };
+        const json = await csvtojson().fromFile(csvPath);
+        return json;
     } catch (error) {
         throw Error(`Error parsing CSV files: ${error.message}.`);
         
@@ -19,19 +15,32 @@ exports.validate = (data, schema) => {
     const validator = ajv.compile(schema);
     const isValid = validator(data)
     if (!isValid) {
-        throw Error(`Error validating data: ${isValid.errors}.`)
+        throw Error(`Error validating data: ${isValid}.`)
     }
 }
 
+exports.transform = (data) => {
+    const transformed = data.map(item => ({
+        empty_count: item.empty_count,
+        gps: {
+            longitude: item.longitude,
+            latitude: item.latitude
+        }
+    }));
+    return transformed
+}
+
 exports.aggrigate = (accelerometer, gps) => {
-    console.log({
-        accelerometer: accelerometer,
-        gps: gps,
-        time: new Date()
-    })
     return {
         accelerometer: accelerometer,
         gps: gps,
+        time: new Date()
+    }
+}
+
+exports.addTime = (object) => {
+    return {
+        ...object,
         time: new Date()
     }
 }

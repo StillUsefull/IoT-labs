@@ -2,19 +2,25 @@ const asyncMqtt = require('async-mqtt');
 //require('dotenv').config()
 
 //custom
-const {parse, validate, aggrigate, sleep} = require('./utils')
+const {parse, validate, aggrigate, sleep, transform, addTime} = require('./utils')
 
 //schemas
 const accelerometerSchema = require('./validationSchema/accelerometer.json');
 const gpsSchema = require('./validationSchema/gps.json');
+const parkingSchema = require('./validationSchema/parkingSchema.json');
 
 async function getData() {
-    const data = await parse('./data/accelerometer.csv', './data/gps.csv')
-    validate(data.accelerometerJson, accelerometerSchema);
-    validate(data.gpsJson, gpsSchema);
+    const accelerometer = await parse('./data/accelerometer.csv');
+    const gps = await parse('./data/gps.csv');
+    const parking = await parse('./data/parking.csv');
+    const transformedParking = transform(parking);
+    validate(accelerometer, accelerometerSchema);
+    validate(gps, gpsSchema);
+    validate(transformedParking, parkingSchema);
     return {
-        accelerometer: data.accelerometerJson,
-        gps: data.gpsJson
+        accelerometer: accelerometer,
+        gps: gps,
+        parking: transformedParking
     };
     
 }
@@ -37,16 +43,21 @@ async function connect() {
 
 
 async function send(data, client) {
-    const { accelerometer, gps } = data;
-    console.log(gps)
-    const delay = parseInt(process.env.DELAY, 10) || 1000;
-    const topic = process.env.MQTT_TOPIC || 'test/topic'; // Добавьте значения по умолчанию для примера
+    const { accelerometer, gps, parking } = data;
+    const delay = parseInt(process.env.DELAY) || 1000;
+    const topic = process.env.MQTT_TOPIC;
+    const parkingTopic = process.env.PARKING_TOPIC;
     for (let i = 0; i < accelerometer.length; i++) {
+
         const aggregatedObject = aggrigate(accelerometer[i], gps[i]);
-        const msg = JSON.stringify(aggregatedObject);
-        console.log(`Message was sended: ${msg}`);
+        const parkingWithTime = addTime(parking[i]);
+
+        const topicMsg = JSON.stringify(aggregatedObject);
+        const parkingMsg = JSON.stringify(parkingWithTime);
+        console.log(`Message was sended: ${topicMsg}, ${parkingMsg}`);
         try {
-            await client.publish(topic, msg);
+            await client.publish(topic, topicMsg);
+            await client.publish(parkingTopic, parkingMsg)
         } catch (error) {
             console.log(`Failed to send message to topic ${topic}`, error);
             break
