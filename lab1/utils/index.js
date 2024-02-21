@@ -1,6 +1,6 @@
 const csvtojson = require('csvtojson/v2');
 const Ajv = require('ajv');
-exports.parse = async (accelerometerPath = './data/accelerometer.csv', gpsPath = './data/gps.csv') => {
+exports.parse = async (accelerometerPath, gpsPath) => {
     try {
         const accelerometerJson = await csvtojson().fromFile(accelerometerPath);
         const gpsJson = await csvtojson().fromFile(gpsPath);

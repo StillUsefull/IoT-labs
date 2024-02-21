@@ -10,9 +10,8 @@ services:
       - ./mosquitto/log:/mosquitto/log
     ports:
       - 1883:1883
-      - 9001:9001
     networks:
-      mqtt_network:
+      - mqtt_network
 
 
   fake_agent:
@@ -24,10 +23,11 @@ services:
       MQTT_BROKER_HOST: "mqtt"
       MQTT_BROKER_PORT: 1883
       MQTT_TOPIC: "agent_data_topic"
-      DELAY: 1
+      DELAY: 1000
     networks:
-      mqtt_network:
+      - mqtt_network
 
 
 networks:
   mqtt_network:
+    driver: bridge
