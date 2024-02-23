@@ -7,7 +7,7 @@ const PG_DB = process.env.PG_DB
 const PG_HOST = process.env.PG_HOST
 
 const dbConfig = {
-    host: 'localhost',
+    host: PG_HOST,
     port: PG_PORT,
     database: PG_DB,
     user: PG_USERNAME,
