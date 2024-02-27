@@ -1,0 +1,40 @@
+const db = require('./db')
+
+class AgentDataService {
+    constructor(batchData){
+        this.batchData = batchData;
+    }
+
+
+    aggrigateData(){
+        this.aggrigatedData = this.batchData.map((record) => {
+            try {
+                const accelerometer = record.accelerometer;
+                const gps = record.gps;
+                const time = record.time;
+                return {...accelerometer, ...gps, timestamp: time};
+            } catch (e){
+                console.log(e.message)
+            }
+        })
+    }
+
+    async insertData() {
+        this.aggrigateData(); 
+        try {
+            await db.tx(async t => {
+                const queries = this.aggrigatedData.map(record => {
+                    return t.none(
+                        'INSERT INTO processed_agent_data(x, y, z, latitude, longitude, timestamp) VALUES(${x}, ${y}, ${z}, ${latitude}, ${longitude}, ${timestamp})',
+                        record
+                    );
+                });
+                await t.batch(queries);
+            });
+            console.log("All data has been inserted successfully.");
+        } catch (e) {
+            console.error("Error inserting data:", e.message);
+        }
+    }
+}
+module.exports = AgentDataService;
