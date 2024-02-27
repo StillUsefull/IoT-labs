@@ -1,0 +1,72 @@
+version: "3.9"
+name: "lab3"
+services:
+  postgres_db:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: test_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/structure.sql:/docker-entrypoint-initdb.d/structure.sql
+    ports:
+      - "5432:5432"
+    networks:
+      hub_redis:
+
+
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      hub_redis:
+  
+  cache:
+    image: redis:latest
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - cache:/data
+
+  hub:
+    container_name: hub
+    build: ../
+    depends_on:
+      - cache
+    environment:
+      STORE_API_HOST: "store"
+      STORE_API_PORT: 8000
+      REDIS_HOST: "redis"
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+      MQTT_BROKER_HOST: "0.0.0.0"
+      MQTT_BROKER_PORT: 1883
+      MQTT_TOPIC: "processed_data_topic"
+      BATCH_SIZE: 1
+    ports:
+      - "9000:8000"
+    networks:
+      hub_redis:
+    
+
+networks:
+  hub_redis:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  pgadmin-data:
+  cache:
