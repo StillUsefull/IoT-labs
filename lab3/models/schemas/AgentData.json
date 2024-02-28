@@ -38,8 +38,7 @@
       },
       "time": {
         "type": "string",
-        "description": "Timestamp of the data",
-        "format": "date-time"
+        "description": "Timestamp of the data"
       }
     },
     "required": ["accelerometer", "gps", "time"]

@@ -1,5 +1,5 @@
 const asyncMqtt = require('async-mqtt');
-//require('dotenv').config()
+require('dotenv').config()
 
 //custom
 const {parse, validate, aggrigate, sleep, transform, addTime} = require('./utils')
@@ -26,7 +26,7 @@ async function getData() {
 }
 
 async function connect() {
-    const broker = process.env.MQTT_BROKER_HOST || 'localhost'; 
+    const broker = process.env.MQTT_BROKER_HOST || '0.0.0.0'; 
     const port = process.env.MQTT_BROKER_PORT || '1883';
     const url = `mqtt://${broker}:${port}`;
     console.log(`CONNECT TO ${url}`);
