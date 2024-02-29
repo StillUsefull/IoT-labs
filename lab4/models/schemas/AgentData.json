@@ -1,0 +1,45 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Agent Data",
+    "description": "Schema for accelerometer and GPS data",
+    "type": "object",
+    "properties": {
+      "accelerometer": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "string",
+            "description": "X-axis acceleration value"
+          },
+          "y": {
+            "type": "string",
+            "description": "Y-axis acceleration value"
+          },
+          "z": {
+            "type": "string",
+            "description": "Z-axis acceleration value"
+          }
+        },
+        "required": ["x", "y", "z"]
+      },
+      "gps": {
+        "type": "object",
+        "properties": {
+          "longitude": {
+            "type": "string",
+            "description": "Longitude value"
+          },
+          "latitude": {
+            "type": "string",
+            "description": "Latitude value"
+          }
+        },
+        "required": ["longitude", "latitude"]
+      },
+      "time": {
+        "type": "string",
+        "description": "Timestamp of the data"
+      }
+    },
+    "required": ["accelerometer", "gps", "time"]
+  }

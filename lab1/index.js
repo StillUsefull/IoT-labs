@@ -54,7 +54,7 @@ async function send(data, client) {
 
         const topicMsg = JSON.stringify(aggregatedObject);
         const parkingMsg = JSON.stringify(parkingWithTime);
-        console.log(`Message was sended: ${topicMsg}, ${parkingMsg}`);
+        // console.log(`Message was sended: ${topicMsg}, ${parkingMsg}`);
         try {
             await client.publish(topic, topicMsg);
             await client.publish(parkingTopic, parkingMsg)

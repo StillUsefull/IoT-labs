@@ -35,7 +35,7 @@ async function main(){
                 const lenght = await count(redisClient)
                 if ( lenght >= process.env.BATCH_SIZE){
                     const records = await pullAllAndDelete(redisClient)
-                    console.log(records);
+                   // console.log(records);
                     const agentData = new AgentDataService(records);
                     await agentData.insertData();
                 }

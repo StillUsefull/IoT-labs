@@ -12,7 +12,7 @@ class AgentDataService {
                 const accelerometer = record.accelerometer;
                 const gps = record.gps;
                 const time = record.time;
-                return {...accelerometer, ...gps, timestamp: time};
+                return {...accelerometer, ...gps, road_state: record.road_state, timestamp: time};
             } catch (e){
                 console.log(e.message)
             }
@@ -25,7 +25,7 @@ class AgentDataService {
             await db.tx(async t => {
                 const queries = this.aggrigatedData.map(record => {
                     return t.none(
-                        'INSERT INTO processed_agent_data(x, y, z, latitude, longitude, timestamp) VALUES(${x}, ${y}, ${z}, ${latitude}, ${longitude}, ${timestamp})',
+                        'INSERT INTO processed_agent_data(x, y, z, latitude, longitude, timestamp, road_state) VALUES(${x}, ${y}, ${z}, ${latitude}, ${longitude}, ${timestamp}, ${road_state})',   
                         record
                     );
                 });
