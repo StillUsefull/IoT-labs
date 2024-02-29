@@ -19,12 +19,16 @@ function main(){
     });
 
     client.on('message', (topic, message) => {
-        const obj = JSON.parse(message);
-        const agentData = new AgentData(obj.accelerometer, obj.gps, obj.time);
-        agentData.validate();
-        agentData.processData();
-        console.log(JSON.stringify(agentData))
-        client.publish(hubTopic, JSON.stringify(agentData));
+        try {
+            const obj = JSON.parse(message);
+            const agentData = new AgentData(obj);
+           // console.log(agentData.data)
+            agentData.validate();
+            agentData.processData();
+            client.publish(hubTopic, JSON.stringify(agentData.data));
+        } catch (e) {
+            console.log(e.message);
+        }
     })
 }
 

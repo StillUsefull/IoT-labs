@@ -12,15 +12,18 @@ class AgentDataService {
                 const accelerometer = record.accelerometer;
                 const gps = record.gps;
                 const time = record.time;
-                return {...accelerometer, ...gps, road_state: record.road_state, timestamp: time};
+                const road_state = record.road_state
+                return {...accelerometer, ...gps, road_state: road_state, timestamp: time};
             } catch (e){
                 console.log(e.message)
             }
-        })
+        });
+        
     }
 
     async insertData() {
-        this.aggrigateData(); 
+        this.aggrigateData();
+        console.log(this.aggrigatedData) 
         try {
             await db.tx(async t => {
                 const queries = this.aggrigatedData.map(record => {

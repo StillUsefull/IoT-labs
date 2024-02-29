@@ -5,5 +5,6 @@ CREATE TABLE processed_agent_data (
     z TEXT NOT NULL,
     latitude NUMERIC(10, 8) NOT NULL,
     longitude NUMERIC(11, 8) NOT NULL,
+    road_state TEXT NOT NULL,
     timestamp TIMESTAMP WITH TIME ZONE NOT NULL
 );

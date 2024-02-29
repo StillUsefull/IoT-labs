@@ -108,11 +108,12 @@ services:
       PG_PORT: 5432
       PG_DB: test_db
     ports:
-      - "9000:8000"
+      - "9000:9000"
     networks:
       mqtt_network:
       hub_store:
       hub_redis:
+      db_network:
       
 
   fake_agent:
