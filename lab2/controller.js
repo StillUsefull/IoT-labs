@@ -16,7 +16,7 @@ exports.routes = async (fastify, options) => {
         }
         subscriptions[user_id].add(connection.socket);
         connection.socket.on('message', message => {
-            console.log(message);
+          //  console.log(message);
         });
         connection.socket.on('close', () => {
             subscriptions[user_id].delete(connection.socket);
@@ -73,15 +73,14 @@ exports.routes = async (fastify, options) => {
           body: {
             type: 'object',
             properties: {
-              road_state: { type: 'integer' },
-              user_id: { type: 'integer' },
+              road_state: { type: 'string' },
               x: { type: 'integer' },
               y: { type: 'integer' },
               z: { type: 'integer' },
               latitude: { type: 'number' },
               longitude: { type: 'number' },
             },
-            required: ['road_state', 'user_id', 'x', 'y', 'z', 'latitude', 'longitude']
+            required: ['road_state', 'x', 'y', 'z', 'latitude', 'longitude']
           },
           response: {
             200: {
@@ -117,35 +116,7 @@ exports.routes = async (fastify, options) => {
         }
     );
 
-    fastify.get('/processed_agent_data',
-    {
-        schema: {
-          description: 'Get all processed agent data entries',
-          tags: ['processed_agent_data'],
-          summary: 'Gets all data',
-          response: {
-            200: {
-              description: 'Successful response',
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  id: { type: 'integer' },
-                  road_state: { type: 'integer' },
-                  user_id: { type: 'integer' },
-                  x: { type: 'integer' },
-                  y: { type: 'integer' },
-                  z: { type: 'integer' },
-                  latitude: { type: 'number' },
-                  longitude: { type: 'number' },
-                  timestamp: { type: 'string', format: 'date-time' }
-                }
-              }
-            }
-          }
-        }
-    },
-        async (req, rep) => {
+    fastify.get('/processed_agent_data', async (req, rep) => {
             try {
                 const data = await db.any('SELECT * FROM processed_agent_data');
                 rep.send(data);
@@ -168,8 +139,7 @@ exports.routes = async (fastify, options) => {
                 type: 'object',
                 properties: {
                   id: { type: 'integer' },
-                  road_state: { type: 'integer' },
-                  user_id: { type: 'integer' },
+                  road_state: { type: 'string' },
                   x: { type: 'integer' },
                   y: { type: 'integer' },
                   z: { type: 'integer' },
@@ -206,8 +176,7 @@ exports.routes = async (fastify, options) => {
           body: {
             type: 'object',
             properties: {
-              road_state: { type: 'integer' },
-              user_id: { type: 'integer' },
+              road_state: { type: 'string' },
               x: { type: 'integer' },
               y: { type: 'integer' },
               z: { type: 'integer' },
@@ -233,7 +202,7 @@ exports.routes = async (fastify, options) => {
                 validate(req.body, dataSchema)
                 const { road_state, user_id, x, y, z, latitude, longitude } = req.body;
                 const result = await db.result(
-                    'UPDATE processed_agent_data SET road_state = $1, user_id = $2, x = $3, y = $4, z = $5, latitude = $6, longitude = $7 WHERE id = $8',
+                    'UPDATE processed_agent_data SET road_state = $1, x = $3, y = $4, z = $5, latitude = $6, longitude = $7 WHERE id = $8',
                     [road_state, user_id, x, y, z, latitude, longitude, id]
                 );
                 if (result.rowCount > 0) {

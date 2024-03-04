@@ -23,7 +23,7 @@ class AgentDataService {
 
     async insertData() {
         this.aggrigateData();
-        console.log(this.aggrigatedData) 
+        // console.log(this.aggrigatedData) 
         try {
             await db.tx(async t => {
                 const queries = this.aggrigatedData.map(record => {

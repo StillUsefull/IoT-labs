@@ -5,6 +5,10 @@ const fastify = require('fastify')(
 
 const port = process.env.PORT || 3000
 
+
+fastify.register(require('@fastify/cors'), {
+    origin: true
+})
 fastify.register(require('./controller.js').routes);
 fastify.listen({
     port: port,

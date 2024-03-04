@@ -4,10 +4,7 @@
     "type": "object",
     "properties": {
       "road_state": {
-        "type": "integer"
-      },
-      "user_id": {
-        "type": "integer"
+        "type": "string"
       },
       "x": {
         "type": "integer"
